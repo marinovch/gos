@@ -1,0 +1,1343 @@
+Стек, массив. Сортировка выбором. Быстрая сортировка
+ 
+
+ 
+Краткое описание алгоритмов и структур данных:
+Стек (англ. stack — стопка; читается стэк) — абстрактный тип данных, представляющий собой список элементов, организованных по принципу LIFO (англ. last in — first out, «последним пришёл — первым вышел»).
+Массив – это переменная, которая является совокупностью компонентов одного типа. Чтобы использовать массивы в программировании, потребуется предварительное описание определенного типа и указание доступа к элементам. Элементы массива в программировании объединены общим именем. Если требуется обратиться к определенному элементу массива, то достаточно указать имя и индекс. В математике есть понятный пример массива – это векторы и последовательности чисел, в которых группа чисел может обозначаться одним именем. Обратившись к конкретному числу, используют разные индексы.
+Сортировка выбором — алгоритм сортировки. Может быть как устойчивый, так и неустойчивый. На массиве из n элементов имеет время выполнения в худшем, среднем и лучшем случае Θ(n2), предполагая что сравнения делаются за постоянное время.
+Алгоритм сортировки выбором:
+1.	В неотсортированном подмассиве ищется локальный максимум (минимум).
+2.	Найденный максимум (минимум) меняется местами с последним (первым) элементом в подмассиве.
+3.	Если в массиве остались неотсортированные подмассивы — смотри пункт 1.
+Быстрая сортировка является существенно улучшенным вариантом алгоритма сортировки с помощью прямого обмена, известного в том числе своей низкой эффективностью. Принципиальное отличие состоит в том, что в первую очередь производятся перестановки на наибольшем возможном расстоянии и после каждого прохода элементы делятся на две независимые группы. Любопытный факт: улучшение самого неэффективного прямого метода сортировки дало в результате один из наиболее эффективных улучшенных методов.
+Общая идея алгоритма состоит в следующем:
+•	Выбрать из массива элемент, называемый опорным. Это может быть любой из элементов массива. От выбора опорного элемента не зависит корректность алгоритма, но в отдельных случаях может сильно зависеть его эффективность (см. ниже).
+•	Сравнить все остальные элементы с опорным и переставить их в массиве так, чтобы разбить массив на три непрерывных отрезка, следующих друг за другом: «элементы меньшие опорного», «равные» и «большие».
+•	Для отрезков «меньших» и «больших» значений выполнить рекурсивно ту же последовательность операций, если длина отрезка больше единицы.
+На практике массив обычно делят не на три, а на две части: например, «меньшие опорного» и «равные и большие»; такой подход в общем случае эффективнее, так как упрощает алгоритм разделения 
+Исходный код:
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace LAB_ALG1
+{
+    class Program
+    {
+        class Stack
+        {
+            private int[] arr;
+            private int last;
+            private int max;
+
+            public Stack(int size)
+            {
+                arr = new int[size];
+                last = -1;
+                max = size;
+            }
+
+            public void Push(int item)
+            {
+                if (last == max - 1)
+                {
+                    Console.WriteLine("Stack Overflow");
+                    return;
+                }
+                else
+                {
+                    arr[++last] = item;
+                }
+            }
+
+            public int Pop()
+            {
+                if (last == -1)
+                {
+                    Console.WriteLine("Stack Underflow");
+                    return -1;
+                }
+                else
+                {
+                    Console.WriteLine("Poped element is: " + arr[last]);
+                    return arr[last--];
+                }
+            }
+
+            public int Peek()
+            {
+                if (last >= 0)
+                {
+                    return arr[last];
+                }
+                else
+                {
+                    return 0;
+                }
+
+            }
+
+            public void PrintStack()
+            {
+                if (last == -1)
+                {
+                    Console.WriteLine("Stack is Empty");
+                    return;
+                }
+                else
+                {
+                    for (int i = 0; i <= last; i++)
+                    {
+                        Console.WriteLine("Element[" + (i + 1) + "]: " + arr[i]);
+                    }
+                }
+            }
+        }
+
+        public void SelectionSort(int[] arr)
+        {
+            int min, temp;
+            int length = arr.Length;
+
+            for (int i = 0; i < length - 1; i++)
+            {
+                min = i;
+
+                for (int j = i + 1; j < length; j++)
+                {
+                    if (arr[j] < arr[min])
+                    {
+                        min = j;
+                    }
+                }
+
+                if (min != i)
+                {
+                    temp = arr[i];
+                    arr[i] = arr[min];
+                    arr[min] = temp;
+                }
+            }
+        }
+
+
+        int Division(int[] array, int start, int end)
+        {
+            int marker = start;
+            for (int i = start; i <= end; i++)
+            {
+                if (array[i] <= array[end])
+                {
+                    int temp = array[marker]; 
+                    array[marker] = array[i];
+                    array[i] = temp;
+                    marker += 1;
+                }
+            }
+            return marker - 1;
+        }
+
+        void Quicksort(int[] array, int start, int end)
+        {
+            if (start >= end)
+            {
+                return;
+            }
+            int center = Division(array, start, end);
+            Quicksort(array, start, center - 1);
+            Quicksort(array, center + 1, end);
+        }
+
+
+        static void Main(string[] args)
+        {
+            Stack S = new Stack(5);
+
+            S.Push(1);
+            S.Push(2);
+            S.Push(3);
+            S.Push(4);
+            S.Push(5);
+            Console.WriteLine("Elements are : ");
+            S.PrintStack();
+            S.Pop();
+            S.Pop();
+            S.Pop();
+
+            int[] arsort1 = { 4, 0, 3, 5, 1, 7, 2, 6 };
+            int[] arsort2 = { 4, 0, 1, 5, 1, 8, 2, 6 };
+
+            Program pr = new Program();
+            pr.SelectionSort(arsort1);
+            for (int i = 0; i < arsort1.Length; i++)
+                Console.Write(arsort1[i] + " ");
+            Console.WriteLine();
+            pr.Quicksort(arsort2, 0, arsort2.Length - 1);
+            for (int i = 0; i < arsort2.Length; i++)
+                Console.Write(arsort2[i] + " ");
+            Console.Read();
+        }
+    }
+}
+ 
+
+Задача о рюкзаке. Сортировка выбором
+ 
+ 
+1)	Жадный алгоритм (greedy algorithm) — это алгоритм, который на каждом шагу делает локально наилучший выбор в надежде, что итоговое решение будет оптимальным.
+Жадный алгоритм для задачи о рюкзаке состоит в следующем: имеется рюкзак с ограниченной вместимостью по массе; также имеется набор вещей с определенным весом и ценностью. Необходимо подобрать такой набор вещей, чтобы он помещался в рюкзаке и имел максимальную ценность (стоимость).
+Один из самых простых способов точного решения задачи о рюкзаке: это способ полного перебора. Чтобы решить задачу, необходимо составить все комбинации наборов предметов и выбрать тот набор, масса которого не более W, а общая стоимость (по отношению к другим подходящим наборам) максимальна. Вычислительная сложность алгоритма полного перебора для решения задачи о рюкзаке равна O(N!).
+2)	Сортировка выбором – возможно, самый простой в реализации алгоритм сортировки. Как и в большинстве других подобных алгоритмов, в его основе лежит операция сравнения. Сравнивая каждый элемент с каждым, и в случае необходимости производя обмен, метод приводит последовательность к необходимому упорядоченному виду.
+Пусть имеется массив A размером N, тогда сортировка выбором сводится к следующему: 
+1.	берем первый элемент последовательности A[i], здесь i – номер элемента, для первого i равен 1;
+2.	находим минимальный (максимальный) элемент последовательности и запоминаем его номер в переменную key;
+3.	если номер первого элемента и номер найденного элемента не совпадают, т. е. если key?1, тогда два этих элемента обмениваются значениями, иначе никаких манипуляций не происходит;
+4.	увеличиваем i на 1 и продолжаем сортировку оставшейся части массива, а именно с элемента с номером 2 по N, так как элемент A[1] уже занимает свою позицию;
+С каждым последующим шагом размер подмассива, с которым работает алгоритм, уменьшается на 1, но на способ сортировки это не влияет, он одинаков для каждого шага.
+class Program
+    {
+        public void Backpack( int [] weight, int[] cost)
+        {
+            int size = 10;
+            int n = weight.Length;
+            int[] backpack = new int[n];
+            int[] index = new int[n];
+            for (int i = 0; i < n; i++)
+            {
+                index[i] = i + 1;
+            }
+            for (int i = 0; i < n; i++)
+            {
+                Console.Write(weight[i] + " ");
+            }
+            Console.WriteLine();
+            for (int i = 0; i < n; i++)
+            {
+                Console.Write(cost[i] + " ");
+            }
+
+            int[] plotnost = new int[n];
+            for (int i = 0; i < n; i++)
+            {
+                plotnost[i] = cost[i] / weight[i];
+            }
+            Console.WriteLine();
+
+            for (int i = 0; i < n - 1; i++)
+            {
+                for (int j = 1; j < n; j++)
+                {
+                    if (plotnost[i] > plotnost[j])
+                    {
+                        int temp1 = plotnost[i];
+                        plotnost[i] = plotnost[j];
+                        plotnost[j] = temp1;
+
+                        int temp2 = cost[i];
+                        cost[i] = cost[j];
+                        cost[j] = temp2;
+
+                        int temp3 = weight[i];
+                        weight[i] = weight[j];
+                        weight[j] = temp3;
+
+                        int temp4 = index[i];
+                        index[i] = index[j];
+                        index[j] = temp4;
+                    }
+                }
+            }
+            int k = 0;
+            for (int i = 0; i < n; i++)
+            {
+                if (weight[i] < size)
+                {
+                    backpack[k] = index[i];
+                    k++;
+                    size -= weight[i];
+                }
+            }
+            Console.Write("рюкзак:" + " ");
+            for (int i = 0; i < k; i++)
+            {
+                Console.Write(backpack[i] + " ");
+            }
+        }
+
+        public void SelectionSort(int[] arr)
+        {
+            int min, temp;
+            int length = arr.Length;
+
+            for (int i = 0; i < length - 1; i++)
+            {
+                min = i;
+
+                for (int j = i + 1; j < length; j++)
+                {
+                    if (arr[j] < arr[min])
+                    {
+                        min = j;
+                    }
+                }
+                if (min != i)
+                {
+                    temp = arr[i];
+                    arr[i] = arr[min];
+                    arr[min] = temp;
+                }
+            }
+        }
+
+        public int Factorial(int n)
+        {
+            int result = 1;
+            for (int i = 1; i <= n; i++)
+            {
+                result *= i;
+            }
+            return result;
+        }
+
+        public void BubbleSort(int[] nums)
+        {
+            int temp;
+            for (int i = 0; i < nums.Length - 1; i++)
+            {
+                for (int j = i + 1; j < nums.Length; j++)
+                {
+                    if (nums[i] > nums[j])
+                    {
+                        temp = nums[i];
+                        nums[i] = nums[j];
+                        nums[j] = temp;
+                    }
+                }
+            }
+        }
+
+        int Division(int[] array, int start, int end)
+        {
+            int marker = start;
+            for (int i = start; i <= end; i++)
+            {
+                if (array[i] <= array[end])
+                {
+                    int temp = array[marker];
+                    array[marker] = array[i];
+                    array[i] = temp;
+                    marker += 1;
+                }
+            }
+            return marker - 1;
+        }
+
+        void Quicksort(int[] array, int start, int end)
+        {
+            if (start >= end)
+            {
+                return;
+            }
+            int center = Division(array, start, end);
+            Quicksort(array, start, center - 1);
+            Quicksort(array, center + 1, end);
+        }
+
+        static void Main(string[] args)
+        {
+            int[] weightPack = { 5, 3, 10, 15 };
+            int[] costPack = { 15, 6, 40, 50 };
+            int[] arsort1 = { 4, 0, 3, 5, 1, 7, 2, 6 };
+            int[] arsort2 = { 4, 8, 3, 5, 1, 7, 2, 6 };
+            int[] arsort3 = { 4, 8, 3, 5, 1, 7, 2, 6 };
+
+            Program pr = new Program();
+            pr.Backpack(weightPack, costPack);
+            Console.WriteLine();
+            pr.SelectionSort(arsort1);
+            for (int i = 0; i < arsort1.Length; i++)
+                Console.Write(arsort1[i] + " ");
+            Console.WriteLine();
+
+            pr.Factorial(3);
+            pr.BubbleSort(arsort2);
+            for (int i = 0; i < arsort2.Length; i++)
+                Console.Write(arsort2[i] + " ");
+            Console.WriteLine();
+
+            pr.Quicksort(arsort3, 0, arsort3.Length - 1);
+            for (int i = 0; i < arsort3.Length; i++)
+                Console.Write(arsort3[i] + " ");
+            Console.Read();
+        }
+    }
+
+
+
+
+
+
+ 
+Бинарное дерево. Обход в ширину. Алгоритм поиска мин остового дерева
+ 
+1)	Бинарное дерево поиска — это бинарное дерево, обладающее дополнительными свойствами: значение левого потомка меньше значения родителя, а значение правого потомка больше значения родителя для каждого узла дерева. То есть, данные в бинарном дереве поиска хранятся в отсортированном виде. При каждой операции вставки нового или удаления существующего узла отсортированный порядок дерева сохраняется. При поиске элемента сравнивается искомое значение с корнем. Если искомое больше корня, то поиск продолжается в правом потомке корня, если меньше, то в левом, если равно, то значение найдено и поиск прекращается.
+2)	Обход в ширину — один из простейших алгоритмов обхода графа, являющийся основой для многих важных алгоритмов для работы с графами.  Это алгоритм обхода графа, который обрабатывает вершины в порядке увеличения их расстояния от первой. BFS = Breadth-First Search. Рассматривая вершину, алгоритм ищет тех её соседей, которых он ещё не посещал, и заносит их всех в очередь, а затем приступает к следующей в очереди вершине.
+    
+class Program
+    {
+        class Tree
+        {
+            private string value;
+            private int count;
+            private Tree left;
+            private Tree right;
+            public void Insert(string value)
+            {
+                if (this.value == null)
+                    this.value = value;
+                else
+                {
+                    if (this.value.CompareTo(value) == 1)
+                    {
+                        if (left == null)
+                            this.left = new Tree();
+                        left.Insert(value);
+                    }
+                    else if (this.value.CompareTo(value) == -1)
+                    {
+                        if (right == null)
+                            this.right = new Tree();
+                        right.Insert(value);
+                    }
+                    else
+                        throw new Exception("Узел уже существует");
+                }
+
+                this.count = Recount(this);
+            }
+
+            public Tree Search(string value)
+            {
+                if (this.value == value)
+                    return this;
+                else if (this.value.CompareTo(value) == 1)
+                {
+                    if (left != null)
+                        return this.left.Search(value);
+                    else
+                        throw new Exception("Искомого узла в дереве нет");
+                }
+                else
+                {
+                    if (right != null)
+                        return this.right.Search(value);
+                    else
+                        throw new Exception("Искомого узла в дереве нет");
+                }
+            }
+
+            public string Display(Tree t)
+            {
+                string result = "";
+                if (t.left != null)
+                    result += Display(t.left);
+                result += t.value + " ";
+                if (t.right != null)
+                    result += Display(t.right);
+                return result;
+            }
+
+            public int Recount(Tree t)
+            {
+                int count = 0;
+
+                if (t.left != null)
+                    count += Recount(t.left);
+                count++;
+                if (t.right != null)
+                    count += Recount(t.right);
+                return count;
+            }
+
+            public void Clear()
+            {
+                this.value = null;
+                this.left = null;
+                this.right = null;
+            }
+
+            public bool IsEmpty()
+            {
+                if (this.value == null)
+                    return true;
+                else
+                    return false;
+            }
+
+            public void Remove(string value)
+            {
+                Tree t = Search(value);
+                string[] str1 = Display(t).TrimEnd().Split(' ');
+                string[] str2 = new string[str1.Length - 1];
+
+                int i = 0;
+                foreach (string s in str1)
+                {
+                    if (s != value)
+                        str2[i++] = s;
+                }
+
+                t.Clear();
+                foreach (string s in str2)
+                    t.Insert(s);
+
+                this.count = Recount(this);
+            }
+        }
+
+       public static void Main(string[] args)
+        {
+            Tree tr = new Tree();
+            tr.Insert("5");
+            tr.Insert("3");
+            tr.Insert("9");
+            tr.Insert("8");
+            tr.Insert("4");
+            tr.Insert("1");
+            tr.Insert("2");
+            tr.Insert("6");
+
+            Console.Write(tr.Display(tr));
+            Console.ReadKey();
+        }
+    }
+   class Program2
+    {
+        static void Main(string[] args)
+        {
+            Queue<int> q = new Queue<int>(); //Это очередь, хранящая номера вершин 
+            string exit = "";
+            int u;
+            u = 5;
+            bool[] used = new bool[u + 1]; //массив отмечающий посещённые вершины 
+            int[][] garr = new int[5][];
+            garr[0] = new int[] { 2, 3, 4 };
+            garr[1] = new int[] { 2, 4 };
+            garr[2] = new int[] { 0, 1, 3, 4 };
+            garr[3] = new int[] { 0, 2 };
+            garr[4] = new int[] { 0, 1, 2 };
+
+            for (int i = 0; i < u; i++)
+            {
+               Console.Write("\n({0}) вершина —>[", i);
+                for (int j = 0; j < garr[i].Length; j++)
+                {
+                    Console.Write(" {0}", garr[i][j]);
+                }
+
+                Console.Write("]\n");
+            }
+            //массив, хранящий состояние вершины(посещали мы её или нет) 
+            int v = 0;
+            q.Enqueue(v);
+            used[v] = true;
+            Console.WriteLine("Начинаем обход с {0} вершины", v);
+            while (q.Count != 0)
+            {
+                v = q.Peek();
+                Console.WriteLine("Извлекаем {0} ", v);
+                q.Dequeue();
+                for (int j = 0; j < garr[v].Length; j++)
+                {
+                    if (!used[garr[v][j]])
+                    {
+                        used[garr[v][j]] = true;
+                        q.Enqueue(garr[v][j]);
+                        Console.WriteLine("Добавили в очередь {0}", garr[v][j]);
+                    }
+                }
+            }
+            Console.ReadKey();
+        }
+    }
+    
+    class Program3
+    {
+        public class Graph
+        {
+            public int vertices;
+            public int[,] matrix;
+            public Graph(int vertex)
+            {
+                this.vertices = vertex;
+                matrix = new int[vertex, vertex];
+            }
+            public void AddEdge(int source, int destination, int weight)
+            {
+                matrix[source, destination] = weight;
+                matrix[destination, source] = weight;
+            }
+
+            int GetMinimumVertex(bool[] mst, int[] key)
+            {
+                int minKey = int.MaxValue;
+                int vertex = -1;
+                for (int i = 0; i < vertices; i++)
+                {
+                    if (mst[i] == false && minKey > key[i])
+                    {
+                        minKey = key[i];
+                        vertex = i;
+                    }
+                }
+                return vertex;
+            }
+
+            public class ResultSet
+            {
+                public int parent;
+                public int weight;
+            }
+
+            public void PrimMST()
+            {
+                bool[] mst = new bool[vertices];
+                ResultSet[] resultSet = new ResultSet[vertices];
+                int[] key = new int[vertices];
+                for (int i = 0; i < vertices; i++)
+                {
+                    key[i] = int.MaxValue;
+                    resultSet[i] = new ResultSet();
+                }
+
+                key[0] = 0;
+                resultSet[0] = new ResultSet
+                {
+                    parent = -1
+                };
+
+                //create MST 
+                for (int i = 0; i < vertices; i++)
+                {
+                    int vertex = GetMinimumVertex(mst, key);
+                    mst[vertex] = true;
+
+                    for (int j = 0; j < vertices; j++)
+                    {
+                        if (matrix[vertex, j] > 0)
+                        {
+                            if (mst[j] == false && matrix[vertex, j] < key[j])
+                            {
+                                key[j] = matrix[vertex, j];
+                                resultSet[j].parent = vertex;
+                                resultSet[j].weight = key[j];
+                            }
+                        }
+                    }
+                }
+                PrintMST(resultSet);
+            }
+
+            public void PrintMST(ResultSet[] resultSet)
+            {
+                int total_min_weight = 0;
+                Console.WriteLine("Минимальное остовное дерево: ");
+                for (int i = 1; i < vertices; i++)
+                {
+                    Console.WriteLine("Ребро: " + resultSet[i].parent + " - " + i);
+                   Console.WriteLine("Вес: " + resultSet[i].weight);
+                    total_min_weight += resultSet[i].weight;
+                }
+                Console.WriteLine("Общий минимальный вес: " + total_min_weight);
+                Console.ReadKey();
+            }
+        }
+
+
+
+
+
+Хэш-таблица (линейное пробирование). Метод цепочек. Односвязный список
+ 
+1)	Хэш-таблица — это структура данных, реализующая интерфейс ассоциативного массива, а именно, она позволяет хранить пары (ключ, значение) и выполнять три операции: операцию добавления новой пары, операцию поиска и операцию удаления пары по ключу.
+Линейное пробирование: ячейки хеш-таблицы последовательно просматриваются с некоторым фиксированным интервалом k между ячейками (обычно k = 1), то есть i-й элемент последовательности проб — это ячейка с номером (hash(x) + ik) mod N. Для того, чтобы все ячейки оказались просмотренными по одному разу, необходимо, чтобы k было взаимно-простым с размером хеш-таблицы.
+
+2)	Метод цепочек. Каждая ячейка массива H является указателем на связный список (цепочку) пар ключ-значение, соответствующих одному и тому же хеш-значению ключа. Коллизии просто приводят к тому, что появляются цепочки длиной более одного элемента.
+Операции поиска или удаления элемента требуют просмотра всех элементов соответствующей ему цепочки, чтобы найти в ней элемент с заданным ключом. Для добавления элемента нужно добавить элемент в конец или начало соответствующего списка и в случае, если коэффициент заполнения станет слишком велик, увеличить размер массива H и перестроить таблицу.
+При предположении, что каждый элемент может попасть в любую позицию таблицы H с равной вероятностью и независимо от того, куда попал любой другой элемент, среднее время работы операции поиска элемента составляет Θ(1 + α), где α — коэффициент заполнения таблицы.
+Исходный код:
+class HashElement
+    {
+        private int key;
+        private int value;
+        private bool deleted;
+
+        public HashElement(int key, int value)
+        {
+            this.key = key;
+            this.value = value;
+            deleted = false;
+        }
+
+        public int hash(int value)
+        {
+            return value % 10;
+        }
+
+        public void setDeleted()
+        {
+            deleted = true;
+        }
+
+        public bool isDeleted()
+        {
+            return deleted;
+        }
+
+        public int getKey()
+        {
+            return key;
+        }
+
+        public int getValue()
+        {
+            return value;
+        }
+    }
+class ClassHash
+    {
+        public static int SIZE = 100001;
+        private HashElement[] table = new HashElement[SIZE];
+
+        public int hash(int value)
+        {
+            return value % 10;
+        }
+
+        public bool add(int value)
+        {
+
+            int probe;
+            int code = hash(value);
+            if ((table[code] == null) || table[code].isDeleted())
+            {
+                table[code] = new HashElement(code, value);
+                probe = -1;
+            }
+
+            else
+            {
+
+                if (code == (table.Length - 1))
+                    probe = 0;
+                else
+                    probe = code + 1;
+            }
+
+            while ((probe != -1) && (probe != code))
+            {
+
+                if ((table[probe] == null) || table[probe].isDeleted())
+                {
+
+                    table[probe] = new HashElement(code, value);
+                    probe = -1;
+                }
+
+                else
+                {
+                    if (probe == (table.Length - 1))
+                        probe = 0;
+                    else
+                        probe++;
+                }
+            }
+
+
+            if (probe != -1)
+                return false;
+            else
+                return true;
+        }
+
+
+        public int find(int value)
+        {
+
+            int probe;
+
+
+            int code = hash(value);
+
+
+
+            if (table[code] == null)
+                return -1;
+
+            else if (table[code].getValue().Equals(value))
+                return table[code].getValue();
+
+            else
+            {
+
+                if (code == (table.Length - 1))
+                    probe = 0;
+                else
+                    probe = code + 1;
+            }
+
+
+            while ((probe != -1) && (probe != code))
+            {
+
+                if (table[probe] == null)
+                    return -1;
+
+                else if (table[probe].getValue().Equals(value))
+                {
+
+                    return table[probe].getValue();
+                }
+
+                else
+                {
+                    if (probe == (table.Length - 1))
+                        probe = 0;
+                    else
+                        probe++;
+                }
+            }
+
+            return -1;
+        }
+
+        public bool delete(int value)
+        {
+            int probe;
+            int code = hash(value);
+            if (table[code] == null)
+            {
+                return false;
+            }
+            else if (table[code].getValue().Equals(value))
+            {
+                table[code].setDeleted();
+                probe = -1;
+                return true;
+            }
+            else
+            {
+                if (code == (table.Length - 1))
+                {
+                    probe = 0;
+                }
+                else
+                {
+                    probe = code + 1;
+                }
+            }
+            while ((probe != -1) && (probe != code))
+            {
+                if (table[probe] == null)
+                {
+                    return false;
+                }
+                else if (table[probe].getValue().Equals(value))
+                {
+                    table[probe].setDeleted();
+                    probe = -1;
+                    return true;
+                }
+                else
+                {
+                    if (probe == (table.Length - 1))
+                    {
+                        probe = 0;
+                    }
+                    else
+                    {
+                        probe++;
+                    }
+                }
+            }
+            return false;
+        }
+
+        public void printTable()
+        {
+            for (int i = 0; i < SIZE; i++)
+            {
+                if (table[i] != null)
+                {
+                    if (!table[i].isDeleted())
+                    {
+                        Console.WriteLine(" code: " + table[i].getKey() + " value: " + table[i].getValue());
+                    }
+                }
+            }
+        }
+    }
+class SequentialSearchST<Key, Value> : IEnumerable<Key>
+    {
+        private int n;
+        private Node first;
+
+        private class Node
+        {
+            public Key Key { get; set; }
+            public Value Val { get; set; }
+            public Node Next { get; set; }
+
+            public Node(Key key, Value val, Node next)
+            {
+                this.Key = key;
+                this.Val = val;
+                this.Next = next;
+            }
+        }
+        public SequentialSearchST()
+        {
+        }
+
+        public int Size()
+        {
+            return n;
+        }
+        public bool IsEmpty()
+        {
+            return Size() == 0;
+        }
+        public bool Contains(Key key)
+        {
+            if (key == null) throw new ArgumentException("argument to contains() is null");
+            return Get(key) != null;
+        }
+        public Value Get(Key key)
+        {
+            if (key == null) throw new ArgumentException("argument to get() is null");
+            for (Node x = first; x != null; x = x.Next)
+            {
+                if (key.Equals(x.Key))
+                    return x.Val;
+            }
+            return default(Value);
+        }
+        public void Put(Key key, Value val)
+        {
+            if (key == null) throw new ArgumentException("first argument to put() is null");
+            if (val == null)
+            {
+                Delete(key);
+                return;
+            }
+
+            for (Node x = first; x != null; x = x.Next)
+            {
+                if (key.Equals(x.Key))
+                {
+                    x.Val = val;
+                    return;
+                }
+            }
+            first = new Node(key, val, first);
+            n++;
+        }
+        public void Delete(Key key)
+        {
+            if (key == null) throw new ArgumentException("argument to delete() is null");
+            first = Delete(first, key);
+        }
+        private Node Delete(Node x, Key key)
+        {
+            if (x == null) return null;
+            if (key.Equals(x.Key))
+            {
+                n--;
+                return x.Next;
+            }
+            x.Next = Delete(x.Next, key);
+            return x;
+        }
+        System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator()
+        {
+            return GetEnumerator();
+        }
+
+        public IEnumerator<Key> GetEnumerator()
+        {
+            var node = first;
+            while (node != null)
+            {
+                yield return node.Key;
+                node = node.Next;
+            }
+        }
+
+        public void ConsoleDisplay()
+        {
+            Console.WriteLine();
+            Console.WriteLine("key" + " " + "val");
+            for (Node n = first; n != null; n = n.Next)
+            {
+                Console.WriteLine(" " + n.Key + "  " + n.Val);
+            }
+        }
+
+        public IEnumerable<Key> Keys()
+        {
+            Queue<Key> queue = new Queue<Key>();
+            for (Node x = first; x != null; x = x.Next)
+                queue.Enqueue(x.Key);
+            return queue;
+        }
+
+    }
+class SeparateChainingHashST <Key,Value>
+    {
+        private static int INIT_CAPACITY = 4;
+        private int n;
+        private int m;
+        private SequentialSearchST <Key, Value>[] st;
+
+        public SeparateChainingHashST()
+        {
+            m = INIT_CAPACITY;
+
+        }
+        public SeparateChainingHashST(int m)
+        {
+            this.m = m;
+            st = new SequentialSearchST<Key, Value>[m];
+            for (int i = 0; i < m; i++)
+                st[i] = new SequentialSearchST<Key, Value>();
+        }
+        private void Resize(int chains)
+        {
+            SeparateChainingHashST<Key, Value> temp = new SeparateChainingHashST<Key, Value>(chains);
+            for (int i = 0; i < m; i++)
+            {
+                foreach (Key key in st[i].Keys())
+                {
+                    temp.Put(key, st[i].Get(key));
+                }
+            }
+            this.m = temp.m;
+            this.n = temp.n;
+            this.st = temp.st;
+        }
+        private int Hash(Key key)
+        {
+            return (key.GetHashCode() & 0x7fffffff) % m;
+        }
+        public int Size()
+        {
+            return n;
+        }
+        public bool IsEmpty()
+        {
+            return Size() == 0;
+        }
+
+        public bool Contains(Key key)
+        {
+            if (key == null) throw new ArgumentException("argument to contains() is null");
+            return Get(key) != null;
+        }
+        public Value Get(Key key)
+        {
+            if (key == null) throw new ArgumentException("argument to get() is null");
+            int i = Hash(key);
+            return st[i].Get(key);
+        }
+        public void ConsoleDisplay()
+        {
+            Console.WriteLine("key   Value   HashKey ");
+            foreach (var key in Keys()) Console.WriteLine(key + "      " + Get(key) + "        " + Hash(key));
+        }
+        public void Put(Key key, Value val)
+        {
+            if (key == null) throw new ArgumentException("first argument to put() is null");
+            if (val == null)
+            {
+                Delete(key);
+                return;
+            }
+            if (n >= 10 * m) Resize(2 * m);
+
+            int i = Hash(key);
+            if (!st[i].Contains(key)) n++;
+            st[i].Put(key, val);
+        }
+        public void Delete(Key key)
+        {
+            if (key == null) throw new ArgumentException("argument to delete() is null");
+
+            int i = Hash(key);
+            if (st[i].Contains(key)) n--;
+            st[i].Delete(key);
+
+            if (m > INIT_CAPACITY && n <= 2 * m) Resize(m / 2);
+        }
+        public IEnumerable<Key> Keys()
+        {
+            Queue<Key> queue = new Queue<Key>();
+            for (int i = 0; i < m; i++)
+            {
+                foreach (Key key in st[i].Keys())
+                    queue.Enqueue(key);
+            }
+            return queue;
+        }
+    }
+class Program
+    {
+        static void Main(string[] args)
+        {
+
+           ClassHash classHash= new ClassHash();
+            classHash.add(5);
+            classHash.add(3);
+            classHash.add(2);
+            classHash.add(1);
+            classHash.delete(3);
+            classHash.printTable();
+
+            Console.WriteLine();
+
+            string[] a =  {
+                "A",
+                "B",
+                "M",
+                "C",
+                "D",
+                "A",
+                "B",
+                "E",
+                "F",
+                "G",
+                "H"
+            };
+            SeparateChainingHashST<string, int> st = new SeparateChainingHashST<string, int>(10);
+            for (int i = 0; i < a.Length; i++)
+            {
+                st.Put(a[i], i);
+            }
+            st.ConsoleDisplay();
+            Console.Read();
+
+        }
+
+        static int Hash(string s)
+        {
+            int a = 0x7FFFFFFF;
+            return (s.GetHashCode() * a % 5);
+        }
+    }
+
+
+
+
+
+Рекурсивный алгоритм факториала
+ 
+1)	В программировании рекурсия тесно связана с функциями, точнее именно благодаря функциям в программировании существует такое понятие как рекурсия или рекурсивная функция. 
+Рекурсия – определение части функции (метода) через саму себя, то есть это функция, которая вызывает саму себя, непосредственно (в своём теле) или косвенно (через другую функцию).
+
+Код:
+  class Program
+    {
+        [STAThread]
+        static void Main(string[] args)
+
+        {
+            string a = Console.ReadLine();
+            int b = Int32.Parse(a);
+            Console.WriteLine("Факториал=" + Factorial(b));
+            Console.ReadKey();
+
+            Application.EnableVisualStyles();
+            Application.SetCompatibleTextRenderingDefault(false);
+            Application.Run(new FormDraw());
+        }
+
+        static int Factorial(int a)
+        {
+            if (a == 0)
+                return 1;
+            return a * Factorial(a - 1);
+        }
+    }
+
+public partial class FormDraw : Form
+    {
+        private const int Level = 5;
+        private int _width;
+        private int _height;
+        private Bitmap _fractal;
+        private Graphics _graph;
+
+        public FormDraw()
+        {
+            InitializeComponent();
+            _width = pictureBoxFractal.Width;
+            _height = pictureBoxFractal.Height;
+        }
+
+        private void buttonDraw_Click(object sender, EventArgs e)
+        {
+            _fractal = new Bitmap(_width, _height);
+            _graph = Graphics.FromImage(_fractal);
+            PointF topPoint = new PointF(_width / 2f, 0);
+            PointF leftPoint = new PointF(0, _height);
+            PointF rightPoint = new PointF(_width, _height);
+            DrawTriangle(Level, topPoint, leftPoint, rightPoint);
+            pictureBoxFractal.BackgroundImage = _fractal;
+        }
+
+        private void DrawTriangle(int level, PointF top, PointF left, PointF right)
+        {
+            if (level == 0)
+            {
+                PointF[] points = new PointF[3]
+                {
+                    top, right, left
+                };
+                _graph.FillPolygon(Brushes.Blue, points);
+            }
+            else
+            {
+                //вычисляем среднюю точку
+                var leftMid = MidPoint(top, left); //левая сторона
+                var rightMid = MidPoint(top, right); //правая сторона
+                var topMid = MidPoint(left, right); // основание
+                DrawTriangle(level - 1, top, leftMid, rightMid);
+                DrawTriangle(level - 1, leftMid, left, topMid);
+                DrawTriangle(level - 1, rightMid, topMid, right);
+            }
+        }
+        private PointF MidPoint(PointF p1, PointF p2)
+        {
+            return new PointF((p1.X + p2.X) / 2f, (p1.Y + p2.Y) / 2f);
+        }
+ }
+
+ 
+ 
+Работа с различными структурами данных
+ArrayList - автоматически расширяемый массив. Вы можете работать с массивом, но при этом не используются квадратные скобки.
+Массивы имеют фиксированную длину, и после того как массив создан, он не может расти или уменьшаться. ArrayList может менять свой размер во время исполнения программы, при этом не обязательно указывать размерность при создании объекта. Кроме того, можно вставить новый элемент в середину коллекции. А также спокойно удалить элемент из любого места. Элементы ArrayList могут быть абсолютно любых типов в том числе и null. 
+Хеш-таблица (hash table) — это специальная структура данных для хранения пар ключей и их значений, ассоциативный массив, в котором ключ представлен в виде хеш-функции.
+Хеш-функция должна иметь следующие свойства:
+•	Всегда возвращать один и тот же адрес для одного и того же ключа;
+•	Не обязательно возвращает разные адреса для разных ключей;
+•	Использует все адресное пространство с одинаковой вероятностью;
+•	Быстро вычислять адрес.
+Стек (англ. stack — стопка; читается стэк) — абстрактный тип данных, представляющий собой список элементов, организованных по принципу LIFO (англ. last in — first out, «последним пришёл — первым вышел»).
+Очередь — абстрактный тип данных с дисциплиной доступа к элементам «первый пришёл — первый вышел» (FIFO, англ. first in, first out). Добавление элемента (принято обозначать словом enqueue — поставить в очередь) возможно лишь в конец очереди, выборка — только из начала очереди (что принято называть словом dequeue — убрать из очереди), при этом выбранный элемент из очереди удаляется.
+Словарь (dictionary) представляет собой сложную структуру данных, позволяющую обеспечить доступ к элементам по ключу. Главное свойство словарей — быстрый поиск на основе ключей. Можно также свободно добавлять и удалять элементы, подобно тому, как это делается в List<T>, но без накладных расходов производительности, связанных с необходимостью смещения последующих элементов в памяти.
+
+
+
+class Program
+    {
+        static void AL()
+        {
+            ArrayList list = new ArrayList();
+            list.Add(2.5); 
+            list.Add(5); 
+            list.Add("Hello"); 
+            Console.WriteLine("ARRAY LIST");
+            Console.WriteLine("Все элементы массива");
+            foreach (var num in list)
+                Console.WriteLine(num + " ");
+            list.RemoveAt(0);
+            Console.WriteLine();
+            Console.WriteLine("Элемент, полученный по индексу: " + list[0]);
+            Console.WriteLine("Элементы массива после удаления первого элемента: ");
+            foreach (var num in list)
+                Console.WriteLine(num + " ");
+            Console.WriteLine();
+        }
+        static void HT()
+        {
+            Hashtable ht = new Hashtable();
+            ht.Add("first", "1");
+            ht.Add("second", "2");
+            ht.Add("third", "3");
+            ICollection keys = ht.Keys;
+            Console.WriteLine("HASH TABLE");
+            Console.WriteLine("Все элементы таблицы: ");
+            foreach (string s in keys)
+                Console.WriteLine(s + ": " + ht[s]);
+            ht.Remove("first");
+            Console.WriteLine("Элементы таблицы после удаления элемента: ");
+            foreach (string s in keys)
+                Console.WriteLine(s + ": " + ht[s]);
+            Console.WriteLine("Элемент, полученный по ключу: ");
+            foreach (DictionaryEntry s in ht)
+                if (s.Key == "third")
+                    Console.WriteLine(s.Value);
+            Console.WriteLine();
+        }
+        static void St()
+        {
+            Stack st = new Stack();
+            st.Push("Первый");
+            st.Push("Второй");
+            st.Push("Третий");
+            Console.WriteLine("STACK");
+            Console.WriteLine("Все элементы стека: ");
+            foreach (var s in st)
+                Console.WriteLine(s + " ");
+            Console.WriteLine("Удаленный элемент: " + st.Pop());
+            Console.WriteLine("Наличие элемента в стеке: ");
+            Console.WriteLine(st.Contains("Второй"));
+            Console.WriteLine("Элементы стека после удаления: ");
+            foreach (var s in st)
+                Console.WriteLine(s + " ");
+            Console.WriteLine();
+        }
+        static void Que()
+        {
+            Queue que = new Queue();
+            que.Enqueue("Первый");
+            que.Enqueue("Второй");
+            que.Enqueue("Третий");
+            Console.WriteLine("QUEUE");
+            Console.WriteLine("Список элементов: ");
+            foreach (var q in que)
+                Console.WriteLine(q + " ");
+            que.Dequeue();
+            Console.WriteLine("Наличие элемента в очереди: ");
+            Console.WriteLine(que.Contains("First"));
+            Console.WriteLine("Список элементов после удаления: ");
+            foreach (var q in que)
+                Console.WriteLine(q + " ");
+            Console.WriteLine();
+        }
+        static void Dict()
+        {
+            Dictionary<int, string> dc = new Dictionary<int, string>(5);
+            dc.Add(1, "Russia");
+            dc.Add(3, "Great Britain");
+            dc.Add(2, "USA");
+            dc.Add(4, "France");
+            dc.Add(5, "China");
+            Console.WriteLine("DICTIONARY");
+            Console.WriteLine("Список элементов: ");
+            foreach (KeyValuePair<int, string> keyValue in dc)
+                Console.WriteLine(keyValue.Key + " - " + keyValue.Value);
+            string country = dc[4];
+            Console.WriteLine("Полученный элемент: " + country);
+            dc.Remove(2);
+            Console.WriteLine("Список элементов после удаления: ");
+            foreach (KeyValuePair<int, string> keyValue in dc)
+                Console.WriteLine(keyValue.Key + " - " + keyValue.Value);
+            Console.WriteLine();
+        }
+    
+    }
+
